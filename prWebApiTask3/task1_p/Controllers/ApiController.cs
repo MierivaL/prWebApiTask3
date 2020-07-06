@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using NPoco;
+using Nancy.Json;
 
 namespace task1_p.Controllers
 {
@@ -11,13 +12,21 @@ namespace task1_p.Controllers
     [ApiController]
     public class ApiController : Controller
     {
+        private readonly IRedisDBConn _redisDB;
+
+        public ApiController(IRedisDBConn redisDBConn)
+        {
+            _redisDB = redisDBConn;
+            redisDBConn.Connect("192.168.0.100:7001,password=prPassword");
+        }
+
         [HttpGet]
-        public async Task<JsonResult> Get(string Number)
+        public async Task<ActionResult> Get(string Number)
         {
             DBConn dbConn = new DBConn();
-
-
-            //List<User> Users = null;
+            string key = "user_" + Number;
+            if (_redisDB.IsDataAvailable(key))
+                return Content(_redisDB.GetData(key), "application/json");
             User user = null;
             using (IDatabase db = dbConn.Connect())
             {
@@ -30,7 +39,9 @@ namespace task1_p.Controllers
             }
 
             dbConn.Dispose(); dbConn = null;
-            return Json(user);
+            string str = new JavaScriptSerializer().Serialize(Json(user));
+            _redisDB.SendData(key, str);
+            return Content(str, "application/json");
         }
 
         // POST api
@@ -42,7 +53,7 @@ namespace task1_p.Controllers
             JsonAppointment info;
             //try
             //{
-                info = JsonSerializer.Deserialize<JsonAppointment>(json);
+                info = System.Text.Json.JsonSerializer.Deserialize<JsonAppointment>(json);
                 using (IDatabase db = dbConn.Connect())
                 {
                     if (-1 == (await db.FetchAsync<User>()).FindIndex(x => x.PhoneNumber.Equals(info.PhoneNumber)))

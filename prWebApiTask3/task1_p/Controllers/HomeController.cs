@@ -22,7 +22,7 @@ namespace task1_p.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromForm] { })
+        public ActionResult Post([FromForm] JsonAppointment jsa)
         {
             client.BaseAddress = new Uri("http://localhost:44353/");
             client.DefaultRequestHeaders.Accept.Clear();
