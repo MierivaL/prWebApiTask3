@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using (Html.BeginForm("Get", "Api", FormMethod.Get))
+{
+    <p>Номер телефона: <input type="text" name="Number" required /></p>
+    <input type="submit" value="Посмотреть существующие записи" />
+}
+<hr />
+@using (Html.BeginForm("Post", "Home", FormMethod.Post))
+{
+    <p>Имя: <input type="text" name="Firstname" required /></p>
+    <p>Фамилия: <input type="text" name="Lastname" required /></p>
+    <p>Отчество: <input type="text" name="Patronymic" required /></p>
+    <p>Номер телефона: <input type="text" name="PhoneNumber" required /></p>
+    <p>Комментарий: <input type="text" name="Comment" required /> </p>
+    <input type="submit" value="Отправить запрос" />
+}
+<hr />

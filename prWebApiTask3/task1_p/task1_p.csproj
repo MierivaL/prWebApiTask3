@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Views\Новая папка1\**" />
+    <Content Remove="Views\Новая папка1\**" />
+    <EmbeddedResource Remove="Views\Новая папка1\**" />
+    <None Remove="Views\Новая папка1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+    <PackageReference Include="NPoco" Version="4.0.2" />
+  </ItemGroup>
+
+
+</Project>
