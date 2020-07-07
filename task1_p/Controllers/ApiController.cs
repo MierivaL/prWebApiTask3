@@ -25,11 +25,17 @@ namespace task1_p.Controllers
         {
             DBConn dbConn = new DBConn();
             string key = "user_" + Number;
+            User user;
 
             string val = "";
-            if (!_memoryCache.TryGetValue(key, out val))
+            if (_memoryCache.TryGetValue(key, out val))
             {
-                User user = null;
+                _memoryCache.Set(key, val, DateTimeOffset.FromUnixTimeSeconds
+                    (DateTimeOffset.Now.ToUnixTimeSeconds() + 60));
+            }
+            else
+            {
+                user = null;
                 using (IDatabase db = dbConn.Connect())
                 {
                     user = (await db.FetchAsync<User>()).Find(x => x.PhoneNumber.Equals(Number));
@@ -42,9 +48,10 @@ namespace task1_p.Controllers
                 dbConn.Dispose(); dbConn = null;
 
                 val = new JavaScriptSerializer().Serialize(Json(user));
+                if (null != user)
+                    _memoryCache.Set(key, val, DateTimeOffset.FromUnixTimeSeconds
+                        (DateTimeOffset.Now.ToUnixTimeSeconds() + 60));
             }
-            _memoryCache.Set(key, val, DateTimeOffset.FromUnixTimeSeconds
-                (DateTimeOffset.Now.ToUnixTimeSeconds() + 60));
             return Content(val, "application/json");
         }
 
