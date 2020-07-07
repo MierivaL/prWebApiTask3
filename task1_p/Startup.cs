@@ -24,7 +24,7 @@ namespace task1_p
             services.AddControllers();
             services.AddRazorPages();
             services.AddSingleton<IDbConn, DBConn>();
-            services.AddSingleton<IRedisDBConn, RedisDBConn>();
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
