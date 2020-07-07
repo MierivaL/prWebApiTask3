@@ -40,7 +40,7 @@ namespace task1_p.Controllers
                     }
                 }
 
-                dbConn.Dispose(); dbConn = null;
+                dbConn.Dispose(); 
 
                 val = new JavaScriptSerializer().Serialize(Json(user));
                 if (null != user)
