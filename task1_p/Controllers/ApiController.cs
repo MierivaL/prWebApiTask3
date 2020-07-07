@@ -28,12 +28,7 @@ namespace task1_p.Controllers
             User user;
 
             string val = "";
-            if (_memoryCache.TryGetValue(key, out val))
-            {
-                _memoryCache.Set(key, val, DateTimeOffset.FromUnixTimeSeconds
-                    (DateTimeOffset.Now.ToUnixTimeSeconds() + 60));
-            }
-            else
+            if (!_memoryCache.TryGetValue(key, out val))
             {
                 user = null;
                 using (IDatabase db = dbConn.Connect())
