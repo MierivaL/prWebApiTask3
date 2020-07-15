@@ -1,0 +1,9 @@
+{
+  "DbOptions": {
+    "SQLIP": "192.168.7.70",
+    "SQLUsername": "sa",
+    "SQLPassword": "123",
+    "RedisIP": "192.168.7.140",
+    "RedisPassword": "prPassword"
+  }
+}

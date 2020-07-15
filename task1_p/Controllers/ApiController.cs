@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using NPoco;
 using Nancy.Json;
+using Microsoft.Extensions.Options;
+using task1_p.Models;
 
 namespace task1_p.Controllers
 {
@@ -13,11 +15,14 @@ namespace task1_p.Controllers
     public class ApiController : Controller
     {
         private readonly IRedisDBConn _redisDB;
+        private DbOptions dbOptions;
 
-        public ApiController(IRedisDBConn redisDBConn)
+        public ApiController(IRedisDBConn redisDBConn,
+            IOptionsMonitor<DbOptions> options)
         {
             _redisDB = redisDBConn;
-            redisDBConn.Connect("192.168.0.100:7001,password=prPassword");
+            this.dbOptions = options.CurrentValue;
+            redisDBConn.Connect(dbOptions.RedisIP + ":6379,password=" + dbOptions.RedisPassword);
         }
 
         [HttpGet]
@@ -28,7 +33,7 @@ namespace task1_p.Controllers
             if (_redisDB.IsDataAvailable(key))
                 return Content(_redisDB.GetData(key), "application/json");
             User user = null;
-            using (IDatabase db = dbConn.Connect())
+            using (IDatabase db = dbConn.Connect(dbOptions))
             {
                 user = (await db.FetchAsync<User>()).Find(x => x.PhoneNumber.Equals(Number));
                 if (null != user)
@@ -54,7 +59,7 @@ namespace task1_p.Controllers
             //try
             //{
                 info = System.Text.Json.JsonSerializer.Deserialize<JsonAppointment>(json);
-                using (IDatabase db = dbConn.Connect())
+                using (IDatabase db = dbConn.Connect(dbOptions))
                 {
                     if (-1 == (await db.FetchAsync<User>()).FindIndex(x => x.PhoneNumber.Equals(info.PhoneNumber)))
                     {

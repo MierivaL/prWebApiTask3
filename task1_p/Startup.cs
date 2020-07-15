@@ -6,14 +6,21 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Net.NetworkInformation;
 using System.Text;
+using task1_p.Models;
 
 namespace task1_p
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"config.json", optional: false)
+                .AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -23,6 +30,7 @@ namespace task1_p
         {
             services.AddControllers();
             services.AddRazorPages();
+            services.Configure<DbOptions>(Configuration.GetSection(DbOptions.Region));
             services.AddSingleton<IDbConn, DBConn>();
             services.AddSingleton<IRedisDBConn, RedisDBConn>();
         }
